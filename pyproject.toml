@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "asyncgraphs"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+    { name = "Sam Vermeulen", email = "sam.verm@yahoo.com" },
+]
+dependencies = []
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest >=7.2.1,<8.0.0",
+    "pytest-asyncio >=0.20.0,<0.21.0",
+    "coverage >= 7.1.0,< 8.0",
+    "mypy ==1.0.1",
+    "ruff ==0.0.247",
+    "black ==23.1.0",
+    "isort ==5.12.0",
+]
+
+[tool.hatch.version]
+path = "asyncgraphs/__init__.py"
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+strict = true
+
+[tool.ruff]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    # "I",  # isort
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+]
