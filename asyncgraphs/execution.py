@@ -20,9 +20,7 @@ async def run(graph: Graph):
         entry_out_queues.add(q)
     await asyncio.gather(
         run_entrypoint(graph.entry_node, entry_out_queues),
-        *[
-            run_node(i, n, o) for i, n, o in node_run_info
-        ]
+        *[run_node(i, n, o) for i, n, o in node_run_info],
     )
 
 

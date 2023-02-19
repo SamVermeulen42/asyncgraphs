@@ -8,8 +8,7 @@ from asyncgraphs.execution import run
 async def test_range():
     out = []
     g = Graph()
-    g | range(100) \
-      | out.append
+    g | range(100) | out.append
 
     await run(g)
     assert out == list(range(100))
@@ -19,8 +18,7 @@ async def test_range():
 async def test_list():
     out = []
     g = Graph()
-    g | [1, 2, 3] \
-      | out.append
+    g | [1, 2, 3] | out.append
 
     await run(g)
     assert out == [1, 2, 3]
@@ -34,8 +32,7 @@ async def test_generator():
 
     out = []
     g = Graph()
-    g | gen() \
-      | out.append
+    g | gen() | out.append
 
     await run(g)
     assert out == list(range(100))
@@ -49,8 +46,7 @@ async def test_async_generator():
 
     out = []
     g = Graph()
-    g | gen() \
-      | out.append
+    g | gen() | out.append
 
     await run(g)
     assert out == list(range(100))

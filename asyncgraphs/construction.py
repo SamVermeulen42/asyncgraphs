@@ -1,4 +1,4 @@
-from typing import Self, Optional
+from typing import Optional, Self
 
 
 class Node:

@@ -2,8 +2,8 @@ import asyncio
 
 import pytest as pytest
 
-from asyncgraphs.construction import Node, Graph
-from asyncgraphs.execution import run, run_node, Signals
+from asyncgraphs.construction import Graph, Node
+from asyncgraphs.execution import Signals, run, run_node
 
 
 @pytest.mark.asyncio
@@ -26,10 +26,7 @@ async def test_run_node():
 async def test_run_graph():
     out = []
     g = Graph()
-    g | range(100) \
-      | Node("add 1", lambda x: x + 1)  \
-      | (lambda x: x * 2) \
-      | out.append
+    g | range(100) | Node("add 1", lambda x: x + 1) | (lambda x: x * 2) | out.append
 
     await run(g)
     assert out == list(range(2, 201, 2))
