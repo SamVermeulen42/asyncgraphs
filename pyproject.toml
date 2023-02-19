@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "asyncgraphs"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 license = "MIT"
 authors = [
     { name = "Sam Vermeulen", email = "sam.verm@yahoo.com" },
