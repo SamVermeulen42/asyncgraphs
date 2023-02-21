@@ -25,4 +25,4 @@ jobs:
           mypy asyncgraphs
       - name: Tests
         run: |
-          pytest --cov aiorun tests/
+          pytest tests/
