@@ -1,12 +1,12 @@
-import abc
 from typing import (
-    Optional,
+    Any,
+    AsyncIterable,
     Callable,
     Iterable,
-    AsyncIterable,
-    Any,
+    Optional,
     Set,
-    TypeVar, TypeAlias,
+    TypeAlias,
+    TypeVar,
 )
 
 SourceOperation: TypeAlias = Iterable[Any] | AsyncIterable[Any]
@@ -14,7 +14,7 @@ TransformOperation: TypeAlias = Callable[..., Any]
 TTransform = TypeVar("TTransform", bound="Transform")
 
 
-class _NodeBase(abc.ABC):
+class _NodeBase:
     def __init__(self, name: Optional[str]) -> None:
         self.name = name or f"Node<{id(self)}>"
         self.next_nodes: Set[Transform] = set()
@@ -42,13 +42,12 @@ class Transform(_NodeBase):
 
 class Graph:
     def __init__(self) -> None:
-        self.entry_node: Optional[Source] = None
+        self.entry_nodes: Set[Source] = set()
 
     def __or__(self, other: Source | SourceOperation) -> Source:
-        if self.entry_node is not None:
-            raise ValueError("Graph entrypoint is already set.")
         if isinstance(other, Source):
-            self.entry_node = other
+            other_node = other
         else:
-            self.entry_node = Source(None, other)
-        return self.entry_node
+            other_node = Source(None, other)
+        self.entry_nodes.add(other_node)
+        return other_node

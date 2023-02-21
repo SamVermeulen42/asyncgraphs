@@ -26,7 +26,9 @@ async def test_run_node():
 async def test_run_graph():
     out = []
     g = Graph()
-    g | range(100) | Transform("add 1", lambda x: x + 1) | (lambda x: x * 2) | out.append
+    g | range(100) | Transform("add 1", lambda x: x + 1) | (
+        lambda x: x * 2
+    ) | out.append
 
     await run(g)
     assert out == list(range(2, 201, 2))
