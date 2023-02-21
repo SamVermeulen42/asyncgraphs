@@ -2,29 +2,34 @@ import asyncio
 import types
 from asyncio import Queue
 from enum import StrEnum, auto
-from typing import Set
+from typing import Set, List, Tuple, Any
 
-from asyncgraphs.construction import Graph, Node
+from asyncgraphs.construction import Graph, Transform, Source, TransformOperation
+from asyncgraphs.exceptions import NoEntrypointException
 
 
 class Signals(StrEnum):
     completed = auto()
 
 
-async def run(graph: Graph):
+async def run(graph: Graph) -> None:
     node_run_info = []
     entry_out_queues = set()
+    if graph.entry_node is None:
+        raise NoEntrypointException()
     for n in graph.entry_node.next_nodes:
-        q = Queue()
+        q: Queue[Any] = Queue()
         node_run_info += get_children_run_info(q, n)
         entry_out_queues.add(q)
     await asyncio.gather(
-        run_entrypoint(graph.entry_node, entry_out_queues),
-        *[run_node(i, n, o) for i, n, o in node_run_info],
+        run_source(graph.entry_node, entry_out_queues),
+        *[run_transform(i, n, o) for i, n, o in node_run_info],
     )
 
 
-def get_children_run_info(in_queue, node):
+def get_children_run_info(
+    in_queue, node
+) -> List[Tuple[Set[Queue], Transform, Set[Queue]]]:
     to_return = []
     node_out_queues = set()
     for n in node.next_nodes:
@@ -34,7 +39,7 @@ def get_children_run_info(in_queue, node):
     return to_return + [(in_queue, node, node_out_queues)]
 
 
-async def run_entrypoint(node: Node, out_queues: Set[Queue]):
+async def run_source(node: Source, out_queues: Set[Queue]) -> None:
     if isinstance(node.operation, types.AsyncGeneratorType):
         async for data_out in node.operation:
             await asyncio.gather(*[q.put(data_out) for q in out_queues])
@@ -44,7 +49,9 @@ async def run_entrypoint(node: Node, out_queues: Set[Queue]):
     await asyncio.gather(*[q.put(Signals.completed) for q in out_queues])
 
 
-async def run_node(in_queue: Queue, node: Node, out_queues: Set[Queue]):
+async def run_transform(
+    in_queue: Queue, node: Transform, out_queues: Set[Queue]
+) -> None:
     data_in = await in_queue.get()
     while data_in != Signals.completed:
         await apply_operation(data_in, node.operation, out_queues)
@@ -53,7 +60,9 @@ async def run_node(in_queue: Queue, node: Node, out_queues: Set[Queue]):
     await asyncio.gather(*[q.put(Signals.completed) for q in out_queues])
 
 
-async def apply_operation(data_in, operation, out_queues):
+async def apply_operation(
+    data_in: Any, operation: TransformOperation, out_queues: Set[Queue]
+) -> None:
     r = operation(data_in)
 
     # multiple values

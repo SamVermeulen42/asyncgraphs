@@ -2,8 +2,8 @@ import asyncio
 
 import pytest as pytest
 
-from asyncgraphs.construction import Graph, Node
-from asyncgraphs.execution import Signals, run, run_node
+from asyncgraphs.construction import Graph, Transform
+from asyncgraphs.execution import Signals, run, run_transform
 
 
 @pytest.mark.asyncio
@@ -14,7 +14,7 @@ async def test_run_node():
         await in_queue.put(i)
     await in_queue.put(Signals.completed)
 
-    await run_node(in_queue, Node(None, lambda x: x * 2), {out_queue})
+    await run_transform(in_queue, Transform(None, lambda x: x * 2), {out_queue})
 
     results = []
     while (out := await out_queue.get()) != Signals.completed:
@@ -26,7 +26,7 @@ async def test_run_node():
 async def test_run_graph():
     out = []
     g = Graph()
-    g | range(100) | Node("add 1", lambda x: x + 1) | (lambda x: x * 2) | out.append
+    g | range(100) | Transform("add 1", lambda x: x + 1) | (lambda x: x * 2) | out.append
 
     await run(g)
     assert out == list(range(2, 201, 2))
