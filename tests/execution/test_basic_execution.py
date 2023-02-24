@@ -3,7 +3,7 @@ import asyncio
 import pytest as pytest
 
 from asyncgraphs.construction import Graph, Transform
-from asyncgraphs.execution import run, run_transform, CompletedSignal
+from asyncgraphs.execution import CompletedSignal, run, run_transform
 
 
 @pytest.mark.asyncio

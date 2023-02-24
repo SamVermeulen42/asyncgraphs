@@ -8,7 +8,6 @@ import sentinel
 
 from asyncgraphs.construction import Graph, Source, Transform, TransformOperation
 
-
 CompletedSignal = sentinel.create("CompletedSignal")
 
 

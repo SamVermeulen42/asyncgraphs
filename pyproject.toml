@@ -34,6 +34,7 @@ profile = "black"
 
 [tool.mypy]
 strict = true
+ignore_missing_imports = true
 
 [tool.ruff]
 select = [
