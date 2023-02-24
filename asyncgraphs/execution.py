@@ -2,14 +2,14 @@ import asyncio
 import types
 from asyncio import Queue
 from collections.abc import AsyncIterable
-from enum import StrEnum, auto
 from typing import Any, List, Set, Tuple
+
+import sentinel
 
 from asyncgraphs.construction import Graph, Source, Transform, TransformOperation
 
 
-class Signals(StrEnum):
-    completed = auto()
+CompletedSignal = sentinel.create("CompletedSignal")
 
 
 async def run(graph: Graph) -> None:
@@ -44,18 +44,18 @@ async def run_source(node: Source, out_queues: Set[Queue[Any]]) -> None:
     else:
         for data_out in node.operation:
             await asyncio.gather(*[q.put(data_out) for q in out_queues])
-    await asyncio.gather(*[q.put(Signals.completed) for q in out_queues])
+    await asyncio.gather(*[q.put(CompletedSignal) for q in out_queues])
 
 
 async def run_transform(
     in_queue: Queue[Any], node: Transform, out_queues: Set[Queue[Any]]
 ) -> None:
     data_in = await in_queue.get()
-    while data_in != Signals.completed:
+    while data_in != CompletedSignal:
         await apply_operation(data_in, node.operation, out_queues)
         in_queue.task_done()
         data_in = await in_queue.get()
-    await asyncio.gather(*[q.put(Signals.completed) for q in out_queues])
+    await asyncio.gather(*[q.put(CompletedSignal) for q in out_queues])
 
 
 async def apply_operation(
