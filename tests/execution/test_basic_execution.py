@@ -2,8 +2,8 @@ import asyncio
 
 import pytest as pytest
 
-from asyncgraphs.construction import Graph, Transform
-from asyncgraphs.execution import CompletedSignal, run, run_transform
+from asyncgraphs import Graph, Transform, run
+from asyncgraphs.execution import CompletedSignal, run_transform
 
 
 @pytest.mark.asyncio
@@ -32,3 +32,13 @@ async def test_run_graph():
 
     await run(g)
     assert out == list(range(2, 201, 2))
+
+
+@pytest.mark.asyncio
+async def test_rshift_graph():
+    out = []
+    g = Graph()
+
+    g >> [1, 2, 3] >> (lambda x: x * 2) >> out.append
+    await run(g)
+    assert out == [2, 4, 6]

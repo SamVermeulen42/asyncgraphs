@@ -1,7 +1,6 @@
 import pytest
 
-from asyncgraphs.construction import Graph
-from asyncgraphs.execution import run
+from asyncgraphs import Graph, run
 
 
 @pytest.mark.asyncio
