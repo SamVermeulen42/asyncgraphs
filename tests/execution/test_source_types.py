@@ -1,6 +1,6 @@
 import pytest
 
-from asyncgraphs.construction import Graph
+from asyncgraphs.construction import Graph, Source
 from asyncgraphs.execution import run
 
 
@@ -47,6 +47,20 @@ async def test_async_generator():
     out = []
     g = Graph()
     g | gen() | out.append
+
+    await run(g)
+    assert out == list(range(100))
+
+
+@pytest.mark.asyncio
+async def test_async_generator_named():
+    async def gen():
+        for i in range(100):
+            yield i
+
+    out = []
+    g = Graph()
+    g | Source("My source gen", gen()) | out.append
 
     await run(g)
     assert out == list(range(100))
