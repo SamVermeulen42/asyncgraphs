@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import (
     Any,
     AsyncIterable,
@@ -20,7 +21,7 @@ class _NodeBase(Generic[OUT_T]):
         self.name = name or f"Node<{id(self)}>"
         self.next_nodes: Set[Transform[OUT_T, Any]] = set()
 
-    def link_to(self, other: "Transform[OUT_T, Any] | TransformOperation[OUT_T, Any]") -> "Transform[OUT_T, Any]":
+    def link_to(self, other: Transform[OUT_T, Any] | TransformOperation[OUT_T, Any]) -> Transform[OUT_T, Any]:
         if callable(other):
             other_node = Transform(None, other)
         else:
@@ -28,10 +29,10 @@ class _NodeBase(Generic[OUT_T]):
         self.next_nodes.add(other_node)
         return other_node
 
-    def __or__(self, other: "Transform[OUT_T, Any] | TransformOperation[OUT_T, Any]") -> "Transform[OUT_T, Any]":
+    def __or__(self, other: Transform[OUT_T, Any] | TransformOperation[OUT_T, Any]) -> Transform[OUT_T, Any]:
         return self.link_to(other)
 
-    def __rshift__(self, other: "Transform[OUT_T, Any] | TransformOperation[OUT_T, Any]") -> "Transform[OUT_T, Any]":
+    def __rshift__(self, other: Transform[OUT_T, Any] | TransformOperation[OUT_T, Any]) -> Transform[OUT_T, Any]:
         return self.link_to(other)
 
 
