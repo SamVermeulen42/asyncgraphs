@@ -7,9 +7,10 @@ from typing import (
     Set,
     TypeAlias,
     TypeVar,
+    Generic,
 )
 
-SourceOperation: TypeAlias = Iterable[Any] | AsyncIterable[Any]
+OUT_T = TypeVar("OUT_T")
 TransformOperation: TypeAlias = Callable[..., Any]
 TTransform = TypeVar("TTransform", bound="Transform")
 
@@ -34,8 +35,8 @@ class _NodeBase:
         return self.link_to(other)
 
 
-class Source(_NodeBase):
-    def __init__(self, name: Optional[str], operation: SourceOperation) -> None:
+class Source(_NodeBase, Generic[OUT_T]):
+    def __init__(self, name: Optional[str], operation: Iterable[OUT_T] | AsyncIterable[OUT_T]) -> None:
         super().__init__(name)
         self.operation = operation
 
@@ -48,9 +49,9 @@ class Transform(_NodeBase):
 
 class Graph:
     def __init__(self) -> None:
-        self.entry_nodes: Set[Source] = set()
+        self.entry_nodes: Set[Source[Any]] = set()
 
-    def link_to(self, other: Source | SourceOperation) -> Source:
+    def link_to(self, other: Source[OUT_T] | Iterable[OUT_T] | AsyncIterable[OUT_T]) -> Source[OUT_T]:
         if isinstance(other, Source):
             other_node = other
         else:
@@ -58,8 +59,8 @@ class Graph:
         self.entry_nodes.add(other_node)
         return other_node
 
-    def __or__(self, other: Source | SourceOperation) -> Source:
+    def __or__(self, other: Source[OUT_T] | Iterable[OUT_T] | AsyncIterable[OUT_T]) -> Source[OUT_T]:
         return self.link_to(other)
 
-    def __rshift__(self, other: Source | SourceOperation) -> Source:
+    def __rshift__(self, other: Source[OUT_T] | Iterable[OUT_T] | AsyncIterable[OUT_T]) -> Source[OUT_T]:
         return self.link_to(other)

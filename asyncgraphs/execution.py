@@ -36,7 +36,7 @@ def _get_transform_run_info(
     return to_return + [(in_queue, node, node_out_queues)]
 
 
-async def run_source(node: Source, out_queues: Set[Queue[Any]]) -> None:
+async def run_source(node: Source[Any], out_queues: Set[Queue[Any]]) -> None:
     if isinstance(node.operation, AsyncIterable):
         async for data_out in node.operation:
             await asyncio.gather(*[q.put(data_out) for q in out_queues])
