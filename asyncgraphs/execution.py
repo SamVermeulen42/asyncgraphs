@@ -25,8 +25,8 @@ async def run(graph: Graph) -> None:
 
 
 def _get_transform_run_info(
-    in_queue: Queue[Any], node: Transform
-) -> List[Tuple[Queue[Any], Transform, Set[Queue[Any]]]]:
+    in_queue: Queue[Any], node: Transform[Any, Any]
+) -> List[Tuple[Queue[Any], Transform[Any, Any], Set[Queue[Any]]]]:
     to_return = []
     node_out_queues = set()
     for n in node.next_nodes:
@@ -47,7 +47,7 @@ async def run_source(node: Source[Any], out_queues: Set[Queue[Any]]) -> None:
 
 
 async def run_transform(
-    in_queue: Queue[Any], node: Transform, out_queues: Set[Queue[Any]]
+    in_queue: Queue[Any], node: Transform[Any, Any], out_queues: Set[Queue[Any]]
 ) -> None:
     data_in = await in_queue.get()
     while data_in != CompletedSignal:
@@ -58,7 +58,7 @@ async def run_transform(
 
 
 async def apply_operation(
-    data_in: Any, operation: TransformOperation, out_queues: Set[Queue[Any]]
+    data_in: Any, operation: TransformOperation[Any, Any], out_queues: Set[Queue[Any]]
 ) -> None:
     r = operation(data_in)
 
