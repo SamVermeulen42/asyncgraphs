@@ -1,9 +1,18 @@
 # AsyncGraphs
-
-<img src="https://github.com/SamVermeulen42/asyncgraphs/workflows/Tests/badge.svg?event=push&branch=main" alt="Test"/>
-<img src="https://codecov.io/gh/SamVermeulen42/asyncgraphs/branch/main/graph/badge.svg?token=17MW83L23M" alt="Coverage"/>
-<img src="https://img.shields.io/pypi/v/asyncgraphs" alt="Package version"/>
-<img src="https://img.shields.io/pypi/pyversions/asyncgraphs.svg" alt="Supported Python versions">
+<p>
+<a href="https://github.com/SamVermeulen42/asyncgraphs/actions?query=workflow%3ATests+event%3Apush+branch%3Amain" target="_blank" >
+  <img src="https://github.com/SamVermeulen42/asyncgraphs/workflows/Tests/badge.svg?event=push&branch=main" alt="Test"/>
+</a>
+<a href="https://codecov.io/gh/SamVermeulen42/asyncgraphs" target="_blank" >
+  <img src="https://codecov.io/gh/SamVermeulen42/asyncgraphs/branch/main/graph/badge.svg?token=17MW83L23M" alt="Coverage"/> 
+</a>
+<a href="https://pypi.org/project/asyncgraphs" target="_blank">
+  <img src="https://img.shields.io/pypi/v/asyncgraphs" alt="Package version"/>
+</a>
+<a href="https://pypi.org/project/asyncgraphs" target="_blank">
+  <img src="https://img.shields.io/pypi/pyversions/asyncgraphs.svg" alt="Supported Python versions">
+</a>
+</p>
 
 AsyncGraphs is a tiny ETL framework that leverages asyncio to make the execution more efficient.
 
