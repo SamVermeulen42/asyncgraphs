@@ -55,3 +55,71 @@ if __name__ == '__main__':
 
 The example above shows some dummy extract/transform/load steps.
 In the example most are synchronous, but regular applications should use async libraries as often as possible.
+
+
+## Features
+
+### Typed
+
+This library is typed. Checking the types of chained operations is also supported.
+
+In the following example, the source outputs strings. 
+Adding a transformer that expects an integer is thus not supported
+
+This is indicated when using a type checker.
+
+```python
+# tests/test_examples/typed.py
+
+import asyncio
+import random
+import string
+from typing import AsyncGenerator
+
+from asyncgraphs import Graph, run
+
+graph = Graph()
+
+
+async def random_strings(
+    value_count: int, character_count: int
+) -> AsyncGenerator[str, None]:
+    for i in range(value_count):
+        yield "".join(
+            random.choice(string.ascii_lowercase) for _ in range(character_count)
+        )
+        await asyncio.sleep(0)
+
+
+def add_one(value: int) -> int:
+    return value + 1
+
+
+def prefix_hello(value: str) -> str:
+    return f"Hello {value}"
+
+
+async def main() -> None:
+    g = Graph()
+    g | random_strings(20, 5) \
+      | add_one \
+      | print
+    await run(g)
+
+    g = Graph()
+    g | random_strings(20, 5) \
+      | prefix_hello \
+      | print
+    await run(g)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+```commandline
+$ mypy tests/test_examples/typed.py
+tests/test_examples/typed.py:32: error: Unsupported operand types for | ("Source[str]" and "Callable[[int], int]")  [operator]
+Found 1 error in 1 file (checked 1 source file)
+```
+

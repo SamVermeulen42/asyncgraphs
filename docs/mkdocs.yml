@@ -1,0 +1,12 @@
+site_name: AsyncGraphs
+theme:
+  name: material
+
+nav:
+- Overview: index.md
+- install.md
+- Usage:
+  - usage/graph.md
+  - usage/source.md
+  - usage/transform.md
+- changelog.md
