@@ -2,7 +2,7 @@
 
 A source in AsyncGraphs is a Node that simply generates data.
 
-Sources are attached directly to [Graph](./graph.md) objects and take no input.
+Sources are attached directly to [Graph](graph.md) objects and take no input.
 
 Any python Iterable or AsyncIterable can be used.
 
