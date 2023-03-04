@@ -20,26 +20,26 @@ The graph thus looks like this:
 ```mermaid
 flowchart LR
     Source["[1, 2, 3]"]
-    AddOne["lambda x: x + 1"]
-    Double["lambda x: x * 2"]
-    PrintDouble["lambda x: print(f#quot;Doubled: {x}#quot;)"]
-    PrintRegular["lambda x: print(f#quot;Regular: {x}#quot;)"]
+    AddOne["x + 1"]
+    Double["x * 2"]
+    PrintDouble["print(f#quot;Doubled: {x}#quot;)"]
+    PrintRegular["print(f#quot;Regular: {x}#quot;)"]
     
     Source --> AddOne
     AddOne --> Double --> PrintDouble
     AddOne --> PrintRegular
 ```
 
-When calling `run(g)`, this library adds [asyncio Queues](https://docs.python.org/3/library/asyncio-queue.html) after each node.
+When calling `run(g)`, this library adds [asyncio Queues](https://docs.python.org/3/library/asyncio-queue.html) between each pair of nodes.
 At runtime, this is the graph:
 
 ```mermaid
 flowchart LR
     Source["[1, 2, 3]"]
-    AddOne["lambda x: x + 1"]
-    Double["lambda x: x * 2"]
-    PrintDouble["lambda x: print(f#quot;Doubled: {x}#quot;)"]
-    PrintRegular["lambda x: print(f#quot;Regular: {x}#quot;)"]
+    AddOne["x + 1"]
+    Double["x * 2"]
+    PrintDouble["print(f#quot;Doubled: {x}#quot;)"]
+    PrintRegular["print(f#quot;Regular: {x}#quot;)"]
     
     
     Source --> SourceQ([Queue]) --> AddOne
