@@ -14,8 +14,10 @@
 </a>
 </p>
 
-AsyncGraphs is a tiny ETL framework that leverages asyncio to make the execution more efficient.
+AsyncGraphs is a tiny ETL framework that leverages asyncio to make the execution concurrent whilst blocked on I/O.
 
+
+**Documentation:** https://samvermeulen42.github.io/asyncgraphs/
 
 ## Installation
 
