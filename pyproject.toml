@@ -26,6 +26,7 @@ dynamic = ["version"]
 
 [project.urls]
 Source = "https://github.com/SamVermeulen42/asyncgraphs"
+Documentation = "https://samvermeulen42.github.io/asyncgraphs/"
 
 [project.optional-dependencies]
 dev = [
