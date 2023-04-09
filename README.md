@@ -1,4 +1,5 @@
 # AsyncGraphs
+
 <p>
 <a href="https://github.com/SamVermeulen42/asyncgraphs/actions?query=workflow%3ATests+event%3Apush+branch%3Amain" target="_blank" >
   <img src="https://github.com/SamVermeulen42/asyncgraphs/workflows/Tests/badge.svg?event=push&branch=main" alt="Test"/>
@@ -14,10 +15,22 @@
 </a>
 </p>
 
+---
+
 AsyncGraphs is a tiny ETL framework that leverages asyncio to make the execution concurrent whilst blocked on I/O.
 
+**Source:** <a href=https://github.com/SamVermeulen42/asyncgraphs target="_blank">https://github.com/SamVermeulen42/asyncgraphs</a>
 
-**Documentation:** https://samvermeulen42.github.io/asyncgraphs/
+**Documentation:** <a href=https://samvermeulen42.github.io/asyncgraphs/ target="_blank">https://samvermeulen42.github.io/asyncgraphs/</a>
+
+---
+
+## Features
+
+- Typed
+- Simple concurrency based on asyncio
+- Easy construction of ETL graphs
+
 
 ## Installation
 
@@ -25,117 +38,41 @@ AsyncGraphs is a tiny ETL framework that leverages asyncio to make the execution
 pip install asyncgraphs
 ```
 
-## Basic usage
+## Example
+
+The following example prints random Pokémon and the games they appear in.
+
+It does this every 10 seconds and uses [PokéApi](https://pokeapi.co/).
 
 ```python
-import asyncio
-import datetime
-from random import random
-
-import pytz
+import aiohttp
 from asyncgraphs import Graph, run
+import asyncio
+from functools import partial
+from random import randint
+from typing import Dict, Any
 
 
-async def my_extract():
+async def random_pokemon_id():
     while True:
-        await asyncio.sleep(1)
-        yield {"timestamp": datetime.datetime.now(tz=pytz.UTC), "value": random()}
+        yield randint(1, 151)
+        await asyncio.sleep(10)
 
-
-def my_transform(in_doc):
-    if in_doc["value"] < 0.5:
-        in_doc["value"] = None
-    return in_doc
-
-
-class MyForwardFill:
-    def __init__(self):
-        self.last_value = None
-
-    def __call__(self, in_doc):
-        if in_doc["value"] is None:
-            in_doc["value"] = self.last_value
-        else:
-            self.last_value = in_doc["value"]
-        return in_doc
-
+async def get_pokemon_info(session: aiohttp.ClientSession, pokemon_id: int) -> Dict[str, Any]:
+    pokemon_url = f"https://pokeapi.co/api/v2/pokemon/{pokemon_id}"
+    async with session.get(pokemon_url) as response:
+        yield await response.json()
+                
+def format_pokemon(pokemon_info: Dict[str, Any]) -> str:
+    name = pokemon_info["name"]
+    versions = (game['version']['name'] for game in pokemon_info['game_indices'])
+    return f"{name}: {', '.join(versions)}"
 
 async def main():
-    g = Graph()
-    g | my_extract() | my_transform | MyForwardFill() | print
-    await run(g)
+    async with aiohttp.ClientSession() as session:
+        g = Graph()
+        g | random_pokemon_id() | partial(get_pokemon_info, session) | format_pokemon | print
+        await run(g)
 
-if __name__ == '__main__':
-    asyncio.run(main())
+asyncio.run(main())
 ```
-
-The example above shows some dummy extract/transform/load steps.
-In the example most are synchronous, but regular applications should use async libraries as often as possible.
-
-
-## Features
-
-### Typed
-
-This library is typed. Checking the types of chained operations is also supported.
-
-In the following example, the source outputs strings. 
-Adding a transformer that expects an integer is thus not supported
-
-This is indicated when using a type checker.
-
-```python
-# tests/test_examples/typed.py
-
-import asyncio
-import random
-import string
-from typing import AsyncGenerator
-
-from asyncgraphs import Graph, run
-
-graph = Graph()
-
-
-async def random_strings(
-    value_count: int, character_count: int
-) -> AsyncGenerator[str, None]:
-    for i in range(value_count):
-        yield "".join(
-            random.choice(string.ascii_lowercase) for _ in range(character_count)
-        )
-        await asyncio.sleep(0)
-
-
-def add_one(value: int) -> int:
-    return value + 1
-
-
-def prefix_hello(value: str) -> str:
-    return f"Hello {value}"
-
-
-async def main() -> None:
-    g = Graph()
-    g | random_strings(20, 5) \
-      | add_one \
-      | print
-    await run(g)
-
-    g = Graph()
-    g | random_strings(20, 5) \
-      | prefix_hello \
-      | print
-    await run(g)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-```commandline
-$ mypy tests/test_examples/typed.py
-tests/test_examples/typed.py:32: error: Unsupported operand types for | ("Source[str]" and "Callable[[int], int]")  [operator]
-Found 1 error in 1 file (checked 1 source file)
-```
-

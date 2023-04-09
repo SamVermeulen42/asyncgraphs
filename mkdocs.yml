@@ -7,13 +7,13 @@ repo_url: https://github.com/SamVermeulen42/asyncgraphs
 
 nav:
 - Overview: index.md
-- install.md
 - Usage:
   - usage/construction.md
   - usage/execution.md
-  - usage/graph.md
-  - usage/source.md
-  - usage/transform.md
+- Components:
+  - components/graph.md
+  - components/source.md
+  - components/transform.md
 - changelog.md
 
 markdown_extensions:

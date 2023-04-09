@@ -1,6 +1,6 @@
 # Execution
 
-Executing a [Graph](./graph.md) can be done by calling `run(graph)`.
+Executing a [Graph](../components/graph.md) can be done by calling `run(graph)`.
 
 As an example, let's look at what happens when executing the following graph.
 
