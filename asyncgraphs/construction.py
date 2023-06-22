@@ -51,7 +51,10 @@ class _NodeBase(Generic[OUT_T]):
 
 class Source(_NodeBase[OUT_T]):
     def __init__(
-        self, name: str | None, operation: Iterable[OUT_T] | AsyncIterable[OUT_T], out_queue_size: int = 0
+        self,
+        name: str | None,
+        operation: Iterable[OUT_T] | AsyncIterable[OUT_T],
+        out_queue_size: int = 0,
     ) -> None:
         super().__init__(name, out_queue_size)
         self.operation = operation
@@ -59,7 +62,10 @@ class Source(_NodeBase[OUT_T]):
 
 class Transform(_NodeBase[OUT_T], Generic[IN_T, OUT_T]):
     def __init__(
-        self, name: str | None, operation: TransformOperation[IN_T, OUT_T], out_queue_size: int = 0
+        self,
+        name: str | None,
+        operation: TransformOperation[IN_T, OUT_T],
+        out_queue_size: int = 0,
     ) -> None:
         super().__init__(name, out_queue_size)
         self.operation = operation

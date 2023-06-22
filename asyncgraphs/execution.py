@@ -16,8 +16,12 @@ async def run(graph: Graph, default_queue_size: int = 0) -> None:
     for s_node in graph.entry_nodes:
         s_out_queues = set()
         for t_node in s_node.next_nodes:
-            t_in_queue: Queue[Any] = Queue(maxsize=s_node.out_queue_size or default_queue_size)
-            branch_run_info = _get_transform_run_info(t_in_queue, t_node, default_queue_size)
+            t_in_queue: Queue[Any] = Queue(
+                maxsize=s_node.out_queue_size or default_queue_size
+            )
+            branch_run_info = _get_transform_run_info(
+                t_in_queue, t_node, default_queue_size
+            )
             s_out_queues.add(t_in_queue)
             tasks += [run_transform(i, n, o) for i, n, o in branch_run_info]
         tasks.append(run_source(s_node, s_out_queues))
