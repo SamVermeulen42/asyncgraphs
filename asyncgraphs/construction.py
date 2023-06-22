@@ -9,7 +9,6 @@ from typing import (
     Generator,
     Generic,
     Iterable,
-    Optional,
     Set,
     TypeAlias,
     TypeVar,
@@ -24,8 +23,9 @@ TransformOperation: TypeAlias = Callable[
 
 
 class _NodeBase(Generic[OUT_T]):
-    def __init__(self, name: Optional[str]) -> None:
+    def __init__(self, name: str | None, out_queue_size: int = 0) -> None:
         self.name = name or f"Node<{id(self)}>"
+        self.out_queue_size = out_queue_size
         self.next_nodes: Set[Transform[OUT_T, Any]] = set()
 
     def link_to(
@@ -51,17 +51,17 @@ class _NodeBase(Generic[OUT_T]):
 
 class Source(_NodeBase[OUT_T]):
     def __init__(
-        self, name: Optional[str], operation: Iterable[OUT_T] | AsyncIterable[OUT_T]
+        self, name: str | None, operation: Iterable[OUT_T] | AsyncIterable[OUT_T], out_queue_size: int = 0
     ) -> None:
-        super().__init__(name)
+        super().__init__(name, out_queue_size)
         self.operation = operation
 
 
 class Transform(_NodeBase[OUT_T], Generic[IN_T, OUT_T]):
     def __init__(
-        self, name: Optional[str], operation: TransformOperation[IN_T, OUT_T]
+        self, name: str | None, operation: TransformOperation[IN_T, OUT_T], out_queue_size: int = 0
     ) -> None:
-        super().__init__(name)
+        super().__init__(name, out_queue_size)
         self.operation = operation
 
 

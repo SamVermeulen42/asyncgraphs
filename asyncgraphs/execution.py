@@ -11,13 +11,13 @@ from asyncgraphs.construction import Graph, Source, Transform, TransformOperatio
 CompletedSignal = sentinel.create("CompletedSignal")
 
 
-async def run(graph: Graph) -> None:
+async def run(graph: Graph, default_queue_size: int = 0) -> None:
     tasks = []
     for s_node in graph.entry_nodes:
         s_out_queues = set()
         for t_node in s_node.next_nodes:
-            t_in_queue: Queue[Any] = Queue()
-            branch_run_info = _get_transform_run_info(t_in_queue, t_node)
+            t_in_queue: Queue[Any] = Queue(maxsize=s_node.out_queue_size or default_queue_size)
+            branch_run_info = _get_transform_run_info(t_in_queue, t_node, default_queue_size)
             s_out_queues.add(t_in_queue)
             tasks += [run_transform(i, n, o) for i, n, o in branch_run_info]
         tasks.append(run_source(s_node, s_out_queues))
@@ -25,13 +25,13 @@ async def run(graph: Graph) -> None:
 
 
 def _get_transform_run_info(
-    in_queue: Queue[Any], node: Transform[Any, Any]
+    in_queue: Queue[Any], node: Transform[Any, Any], default_queue_size: int
 ) -> List[Tuple[Queue[Any], Transform[Any, Any], Set[Queue[Any]]]]:
     to_return = []
     node_out_queues = set()
     for n in node.next_nodes:
-        q: Queue[Any] = Queue()
-        to_return += _get_transform_run_info(q, n)
+        q: Queue[Any] = Queue(maxsize=node.out_queue_size or default_queue_size)
+        to_return += _get_transform_run_info(q, n, default_queue_size)
         node_out_queues.add(q)
     return to_return + [(in_queue, node, node_out_queues)]
 
