@@ -76,3 +76,17 @@ async def main():
 
 asyncio.run(main())
 ```
+
+## Dev notes
+
+This library is not yet stable. I'm still figuring out my preferred way of handling things.
+
+### local setup
+
+```shell
+pyenv install 3.12
+pyenv local 3.12
+pyenv virtualenv asyncgraphs
+pyenv activate asyncgraphs
+pip install .[dev,docs]
+```

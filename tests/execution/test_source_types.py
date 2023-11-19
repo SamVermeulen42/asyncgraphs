@@ -3,7 +3,7 @@ import pytest
 from asyncgraphs import Graph, Source, run
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_range():
     out = []
     g = Graph()
@@ -13,7 +13,7 @@ async def test_range():
     assert out == list(range(100))
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_list():
     out = []
     g = Graph()
@@ -23,11 +23,10 @@ async def test_list():
     assert out == [1, 2, 3]
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_generator():
     def gen():
-        for i in range(100):
-            yield i
+        yield from range(100)
 
     out = []
     g = Graph()
@@ -37,7 +36,7 @@ async def test_generator():
     assert out == list(range(100))
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_async_generator():
     async def gen():
         for i in range(100):
@@ -51,7 +50,7 @@ async def test_async_generator():
     assert out == list(range(100))
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_async_generator_named():
     async def gen():
         for i in range(100):

@@ -2,7 +2,7 @@ import asyncio
 import types
 from asyncio import Queue
 from collections.abc import AsyncIterable
-from typing import Any, List, Set, Tuple
+from typing import Any
 
 import sentinel
 
@@ -30,17 +30,17 @@ async def run(graph: Graph, default_queue_size: int = 0) -> None:
 
 def _get_transform_run_info(
     in_queue: Queue[Any], node: Transform[Any, Any], default_queue_size: int
-) -> List[Tuple[Queue[Any], Transform[Any, Any], Set[Queue[Any]]]]:
+) -> list[tuple[Queue[Any], Transform[Any, Any], set[Queue[Any]]]]:
     to_return = []
     node_out_queues = set()
     for n in node.next_nodes:
         q: Queue[Any] = Queue(maxsize=node.out_queue_size or default_queue_size)
         to_return += _get_transform_run_info(q, n, default_queue_size)
         node_out_queues.add(q)
-    return to_return + [(in_queue, node, node_out_queues)]
+    return [*to_return, (in_queue, node, node_out_queues)]
 
 
-async def run_source(node: Source[Any], out_queues: Set[Queue[Any]]) -> None:
+async def run_source(node: Source[Any], out_queues: set[Queue[Any]]) -> None:
     if isinstance(node.operation, AsyncIterable):
         async for data_out in node.operation:
             await asyncio.gather(*[q.put(data_out) for q in out_queues])
@@ -51,7 +51,7 @@ async def run_source(node: Source[Any], out_queues: Set[Queue[Any]]) -> None:
 
 
 async def run_transform(
-    in_queue: Queue[Any], node: Transform[Any, Any], out_queues: Set[Queue[Any]]
+    in_queue: Queue[Any], node: Transform[Any, Any], out_queues: set[Queue[Any]]
 ) -> None:
     data_in = await in_queue.get()
     while data_in != CompletedSignal:
@@ -62,7 +62,7 @@ async def run_transform(
 
 
 async def apply_operation(
-    data_in: Any, operation: TransformOperation[Any, Any], out_queues: Set[Queue[Any]]
+    data_in: Any, operation: TransformOperation[Any, Any], out_queues: set[Queue[Any]]
 ) -> None:
     r = operation(data_in)
 
