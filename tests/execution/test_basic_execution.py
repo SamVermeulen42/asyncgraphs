@@ -1,12 +1,12 @@
 import asyncio
 
-import pytest as pytest
+import pytest
 
 from asyncgraphs import Graph, Transform, run
 from asyncgraphs.execution import CompletedSignal, run_transform
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_run_node():
     in_queue = asyncio.Queue()
     out_queue = asyncio.Queue()
@@ -22,7 +22,7 @@ async def test_run_node():
     assert [0, 2, 4, 6, 8, 10, 12, 14, 16, 18] == results
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_run_graph():
     out = []
     g = Graph()
@@ -34,7 +34,7 @@ async def test_run_graph():
     assert out == list(range(2, 201, 2))
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_rshift_graph():
     out = []
     g = Graph()

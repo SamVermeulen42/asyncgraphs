@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from typing import (
-    Any,
+from collections.abc import (
     AsyncGenerator,
     AsyncIterable,
     Awaitable,
     Callable,
     Generator,
-    Generic,
     Iterable,
-    Set,
+)
+from typing import (
+    Any,
+    Generic,
     TypeAlias,
     TypeVar,
 )
@@ -26,7 +27,7 @@ class _NodeBase(Generic[OUT_T]):
     def __init__(self, name: str | None, out_queue_size: int = 0) -> None:
         self.name = name or f"Node<{id(self)}>"
         self.out_queue_size = out_queue_size
-        self.next_nodes: Set[Transform[OUT_T, Any]] = set()
+        self.next_nodes: set[Transform[OUT_T, Any]] = set()
 
     def link_to(
         self, other: Transform[OUT_T, Any] | TransformOperation[OUT_T, Any]
@@ -73,7 +74,7 @@ class Transform(_NodeBase[OUT_T], Generic[IN_T, OUT_T]):
 
 class Graph:
     def __init__(self) -> None:
-        self.entry_nodes: Set[Source[Any]] = set()
+        self.entry_nodes: set[Source[Any]] = set()
 
     def link_to(
         self, other: Source[OUT_T] | Iterable[OUT_T] | AsyncIterable[OUT_T]

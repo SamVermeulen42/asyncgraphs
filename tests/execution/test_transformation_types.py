@@ -3,7 +3,7 @@ import pytest
 from asyncgraphs import Graph, run
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_fn():
     def add_one(x):
         return x + 1
@@ -16,7 +16,7 @@ async def test_fn():
     assert out == [5, 9, 13]
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_async_fn():
     async def add_one(x):
         return x + 1
@@ -29,7 +29,7 @@ async def test_async_fn():
     assert out == [2, 3, 4]
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_iterable():
     def powers(x):
         return [x, x**2, x**3]
@@ -42,7 +42,7 @@ async def test_iterable():
     assert out == [[1, 1, 1], [2, 4, 8], [3, 9, 27]]
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_generator():
     def powers(x):
         yield x
@@ -57,7 +57,7 @@ async def test_generator():
     assert out == [1, 1, 1, 2, 4, 8, 3, 9, 27]
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_async_generator():
     async def powers(x):
         yield x
